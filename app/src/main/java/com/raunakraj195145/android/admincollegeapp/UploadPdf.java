@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.HashMap;
 
-public class UploadPdfActivity extends AppCompatActivity {
+public class UploadPdf extends AppCompatActivity {
     CardView addPdf;
     private final int REQ=1;
     private Uri pdfData;
@@ -51,7 +51,7 @@ public class UploadPdfActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload_pdf);
+        setContentView(R.layout.upload_pdf);
 
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -73,7 +73,7 @@ public class UploadPdfActivity extends AppCompatActivity {
                     pdfTitle.setError("Empty");
                     pdfTitle.requestFocus();
                 }else if(pdfData==null){
-                    Toast.makeText(UploadPdfActivity.this,"Please upload pdf",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UploadPdf.this,"Please upload pdf",Toast.LENGTH_SHORT).show();
                 }else {
                     uploadPdf();
                 }
@@ -86,27 +86,30 @@ public class UploadPdfActivity extends AppCompatActivity {
         pd.setTitle("Please wait...");
         pd.setMessage("Uploading pdf...");
         pd.show();
-        StorageReference reference=storageReference.child("pdf/"+pdfName+"-"+System.currentTimeMillis()+".pdf");
+        StorageReference reference= this.storageReference.child("pdf/"+pdfName+"-"+System.currentTimeMillis()+".pdf");
         reference.putFile(pdfData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Task<Uri> uriTask= taskSnapshot.getStorage().getDownloadUrl();
-                while (uriTask.isComplete());
+                while (!uriTask.isComplete());
                 Uri uri=uriTask.getResult();
                 uploadData(String.valueOf(uri));
+               // downloadUrl=String.valueOf(uri);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull @NotNull Exception e) {
                 pd.dismiss();
-                Toast.makeText(UploadPdfActivity.this,"Something went wrong",Toast.LENGTH_SHORT).show();
+                Toast.makeText(UploadPdf.this,"Something went wrong",Toast.LENGTH_SHORT).show();
 
             }
         });
     }
 
     private void uploadData(String valueOf) {
-        String uniqueKey=databaseReference.child("pdf").push().getKey();
+        downloadUrl=valueOf;
+
+       final String uniqueKey= databaseReference.child("pdf").push().getKey();
 
         HashMap data=new HashMap();
         data.put("pdfTitle",title);
@@ -116,14 +119,14 @@ public class UploadPdfActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull @NotNull Task<Void> task) {
                 pd.dismiss();
-                Toast.makeText(UploadPdfActivity.this,"Pdf uploaded successfully",Toast.LENGTH_SHORT).show();
+                Toast.makeText(UploadPdf.this,"Pdf uploaded successfully",Toast.LENGTH_SHORT).show();
                 pdfTitle.setText("");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull @NotNull Exception e) {
                 pd.dismiss();
-               Toast.makeText(UploadPdfActivity.this,"Failed to upload pdf",Toast.LENGTH_SHORT).show();
+               Toast.makeText(UploadPdf.this,"Failed to upload pdf",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -133,7 +136,7 @@ public class UploadPdfActivity extends AppCompatActivity {
        intent.setType("pdf/docs/ppt");
        // intent.setType("*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Select PDF file"),REQ);
+        startActivityForResult(Intent.createChooser(intent,"Select Pdf File"),REQ);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -145,7 +148,7 @@ public class UploadPdfActivity extends AppCompatActivity {
             if (pdfData.toString().startsWith("content://")) {
                 Cursor cursor=null;
                 try {
-                    cursor=UploadPdfActivity.this.getContentResolver().query(pdfData,null,null,null);
+                    cursor= UploadPdf.this.getContentResolver().query(pdfData,null,null,null,null);
                     if(cursor!=null&&cursor.moveToFirst()){
                         pdfName=cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                     }

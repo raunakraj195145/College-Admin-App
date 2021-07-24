@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     CardView uploadNotice;
     CardView addGalleryImage;
     CardView addEbook;
+    CardView addFaculty;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,10 +22,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         uploadNotice=findViewById(R.id.addNotice);
         addGalleryImage=findViewById(R.id.addGalleryImage);
         addEbook=findViewById(R.id.addEbook);
+        addFaculty=findViewById(R.id.addFaculty);
 
         uploadNotice.setOnClickListener(this);
         addGalleryImage.setOnClickListener(this);
         addEbook.setOnClickListener(this);
+        addFaculty.setOnClickListener(this);
     }
 
     @Override
@@ -39,7 +43,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.addEbook:
-                intent=new Intent(MainActivity.this,UploadPdfActivity.class);
+                intent=new Intent(MainActivity.this, UploadPdf.class);
+                startActivity(intent);
+                break;
+            case R.id.addFaculty:
+                intent=new Intent(MainActivity.this, UpdateFaculty.class);
                 startActivity(intent);
                 break;
         }

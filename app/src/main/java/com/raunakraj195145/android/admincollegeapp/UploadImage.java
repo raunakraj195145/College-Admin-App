@@ -51,7 +51,7 @@ public class UploadImage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload_image);
+        setContentView(R.layout.upload_image);
 
         selectImage=findViewById(R.id.addGalleryImage);
         imageCategory=findViewById(R.id.image_category);
@@ -62,6 +62,7 @@ public class UploadImage extends AppCompatActivity {
         storageReference= FirebaseStorage.getInstance().getReference().child("gallery");
 
         pd=new ProgressDialog(this);
+
         String[] items=new String[]{"Select Category","Convocation","Independence Day","Other Events"};
         imageCategory.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,items));
         imageCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
